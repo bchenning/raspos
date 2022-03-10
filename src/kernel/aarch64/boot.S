@@ -2,7 +2,8 @@
  
 // Make _start global.
 .globl _start
- 
+
+// AArch64 mode
     .org 0x80000
 // Entry point for the kernel. Registers:
 // x0 -> 32 bit pointer to DTB in memory (primary core only) / 0 (secondary cores)
@@ -24,14 +25,14 @@ _start:
     // clear bss
     ldr     x5, =__bss_start
     ldr     w6, =__bss_size
-3:  cbz     w6, 4f
+1:  cbz     w6, 2f
     str     xzr, [x5], #8
     sub     w6, w6, #1
-    cbnz    w6, 3b
+    cbnz    w6, 1b
  
     // jump to C code, should not return
-4:  bl      kernel_main
-    // for failsafe, halt this core too
+2:  bl      kernel_main
+   // for failsafe, halt this core too
 halt:
     wfe
     b halt

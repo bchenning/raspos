@@ -11,7 +11,7 @@ CROSS := aarch64-none-elf
 CC    := $(CROSS)-gcc
 CPP   := $(CROSS)-cpp
 C++   := $(CROSS)-g++
-AS    := $(CROSS)-as
+AS    := $(CROSS)-gcc
 AR    := $(CROSS)-ar
 LD    := $(CROSS)-gcc
 OBJCPY:= $(CROSS)-objcopy
@@ -21,12 +21,12 @@ ASFLAGS :=
 CFLAGS  := -ffreestanding -Wall -Wextra -O2 -g
 CFLAGS  += -I$(INC_DIR)
 LDFLAGS := -ffreestanding -O2 -nostdlib -L$(LIB_DIR)
-LIBFLAGS:= -lgcc
+LIBFLAGS:= 
 ARFLAGS := -crs
 CPYFLAGS:= 
 DPFLAGS := -fhDs
 
-KSRC := $(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*.S)
+KSRC := $(wildcard $(SRC_DIR)/kernel/aarch64/*.c) $(wildcard $(SRC_DIR)/kernel/aarch64/*.S)
 
 KOBJ := $(patsubst %.c,%.o,$(filter %.c,$(KSRC)))
 KOBJ += $(patsubst %.S,%.o,$(filter %.S,$(KSRC)))
@@ -36,8 +36,8 @@ ALL_OBJ := $(OBJ)
 
 DEP := $(OBJ:.o=.d)
 
-KERNEL := $(BIN_DIR)/kernel
-KERNEL_IMG := $(KERNEL).img
+KERNEL := $(BIN_DIR)/kernel.elf
+KERNEL_IMG := $(patsubst %.elf,%.img,$(KERNEL))
 
 QEMU_SYSTEM_AARCH64= qemu-system-aarch64
 QEMU= $(QEMU_SYSTEM_AARCH64) -M raspi3b -nographic
@@ -69,6 +69,7 @@ $(KERNEL_IMG): $(KERNEL)
 clean:
 	rm -f $(KERNEL_IMG)
 	rm -f $(KERNEL)
+	rm -f $(LSCRIPT)
 	rm -f $(ALL_OBJ)
 	rm -f $(DEP)
 
