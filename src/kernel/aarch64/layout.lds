@@ -2,13 +2,7 @@ ENTRY(_start)
  
 SECTIONS {
     /* Starts at LOADER_ADDR. */
-#ifdef __aarch64__
-    /* For AArch64, use */
     . = 0x80000;
-#else
-    /* For AArch32, use */
-    . = 0x8000;
-#endif
     __start = .;
     __text_start = .;
     .text : {

@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
  
-static uint32_t MMIO_BASE;
+static uint64_t MMIO_BASE;
 
 static inline int get_board_part_num() {
     uint32_t reg;
@@ -103,7 +103,7 @@ enum {
 };
  
 // A Mailbox message with set clock rate of PL011 to 3MHz tag
-volatile unsigned int  __attribute__((aligned(16))) mbox[9] = {
+volatile uint32_t  __attribute__((aligned(16))) mbox[9] = {
     9*4, 0, 0x38002, 12, 8, 2, 3000000, 0 ,0
 };
  
@@ -137,7 +137,7 @@ void uart_init(int raspi) {
     // Set it to 3Mhz so that we can consistently set the baud rate
     if (raspi >= 3) {
         // UART_CLOCK = 30000000;
-        unsigned int r = (((unsigned int)(&mbox) & ~0xF) | 8);
+        uint32_t r = (((uint32_t)(&mbox) & ~0xF) | 8);
         // wait until we can talk to the VC
         while ( mmio_read(MBOX_STATUS) & 0x80000000 ) { }
         // send our message to property channel and wait for the response
